@@ -71,10 +71,7 @@ th{font-family:var(--f-display);font-weight:500;font-size:.72rem;letter-spacing:
 td{font-family:var(--f-num)}
 td:first-child{font-family:var(--f-body)}
 td .n{color:var(--muted);font-family:var(--f-num);font-size:.8rem;margin-left:6px}
-tr.hl td{color:var(--accent)}
-tr.sub td:first-child{padding-left:16px}
-tr.sub td.dash{color:var(--line)}
-.note{font-size:.82rem;color:var(--muted);margin:0}
+tr.hl td{color:var(--accent)}.note{font-size:.82rem;color:var(--muted);margin:0}
 @media (max-width:380px){.readouts{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -121,11 +118,7 @@ tr.sub td.dash{color:var(--line)}
 const $=id=>document.getElementById(id);
 const bpmIn=$('bpm'), slider=$('slider');
 const notes=[
-  ['1小節','4/4',4],['2拍','1/2',2],['1拍','1/4',1],
-  ['付点1拍','1/4.',1.5,1],['3連1拍','1/4T',2/3,1],
-  ['半拍','1/8',.5],
-  ['付点半拍','1/8.',.75,1],['3連半拍','1/8T',1/3,1],
-  ['1/4拍','1/16',.25],['1/8拍','1/32',.125]
+  ['1小節','4/4',4],['2拍','1/2',2],['1拍','1/4',1],['半拍','1/8',.5],['1/4拍','1/16',.25],['1/8拍','1/32',.125]
 ];
 const fmt=v=>{const r=Math.round(v*100)/100;return Number.isInteger(r)?String(r):r.toFixed(2).replace(/0$/,'')};
 function render(){
@@ -134,9 +127,8 @@ function render(){
   const beat=60000/b;
   $('v-beat').textContent=fmt(beat);
   $('v-half').textContent=fmt(beat/2);
-  $('rows').innerHTML=notes.map(([n,s,m,x])=>{
+  $('rows').innerHTML=notes.map(([n,s,m])=>{
     const t=beat*m;
-    if(x) return `<tr class="hl sub"><td>${n}<span class="n">${s}</span></td><td>${fmt(t)}</td><td class="dash">–</td><td class="dash">–</td></tr>`;
     return `<tr class="${m===1||m===.5?'hl':''}"><td>${n}<span class="n">${s}</span></td><td>${fmt(t)}</td><td>${fmt(t*1.5)}</td><td>${fmt(t*2/3)}</td></tr>`;
   }).join('');
   if(b>=60&&b<=220) slider.value=Math.round(b);
