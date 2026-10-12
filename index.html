@@ -82,7 +82,10 @@ th{font-family:var(--f-display);font-weight:500;font-size:.72rem;letter-spacing:
 td{font-family:var(--f-num)}
 td:first-child{font-family:var(--f-body)}
 td .n{color:var(--muted);font-family:var(--f-num);font-size:.8rem;margin-left:6px}
-tr.hl td{color:var(--accent)}.note{font-size:.82rem;color:var(--muted);margin:0}
+tr.hl td{color:var(--accent)}
+.cp{border:0;background:transparent;color:inherit;font:inherit;font-variant-numeric:tabular-nums;padding:2px 6px;margin:-2px -6px;border-radius:6px;cursor:pointer}
+.cp:hover{background:var(--accent-soft);color:var(--accent)}
+.cp.done{background:var(--accent);color:var(--panel)}.note{font-size:.82rem;color:var(--muted);margin:0}
 @media (max-width:380px){.readouts{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -121,7 +124,7 @@ tr.hl td{color:var(--accent)}.note{font-size:.82rem;color:var(--muted);margin:0}
       <thead><tr><th>長さ</th><th>通常</th><th>付点</th><th>3連</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
-    <p class="note">付点 = ×1.5、3連 = ×2/3。リリースやプリディレイの目安に。</p>
+    <p class="note">付点 = ×1.5、3連 = ×2/3。数字をタップするとコピーできます。</p>
   </section>
 </div>
 
@@ -140,7 +143,8 @@ function render(){
   $('v-half').textContent=fmt(beat/2);
   $('rows').innerHTML=notes.map(([n,s,m])=>{
     const t=beat*m;
-    return `<tr class="${m===1||m===.5?'hl':''}"><td>${n}<span class="n">${s}</span></td><td>${fmt(t)}</td><td>${fmt(t*1.5)}</td><td>${fmt(t*2/3)}</td></tr>`;
+    const c=v=>`<td><button class="cp" data-v="${fmt(v)}" title="タップでコピー">${fmt(v)}</button></td>`;
+    return `<tr class="${m===1||m===.5?'hl':''}"><td>${n}<span class="n">${s}</span></td>${c(t)}${c(t*1.5)}${c(t*2/3)}</tr>`;
   }).join('');
   if(b>=60&&b<=220) slider.value=Math.round(b);
   document.querySelectorAll('.pre').forEach(c=>c.classList.toggle('on',+c.dataset.bpm===b));
@@ -183,6 +187,12 @@ function copy(el,valId){
   const done=()=>{el.classList.add('copied');hint.textContent=txt+' をコピーしました';setTimeout(()=>{el.classList.remove('copied');hint.textContent='タップでコピー'},1400)};
   try{navigator.clipboard.writeText(txt).then(done,()=>{hint.textContent='コピーできませんでした'})}catch(e){hint.textContent='コピーできませんでした'}
 }
+$('rows').addEventListener('click',e=>{
+  const b=e.target.closest('.cp'); if(!b)return;
+  const v=b.dataset.v;
+  const done=()=>{b.classList.add('done');b.textContent='Copied';setTimeout(()=>{b.classList.remove('done');b.textContent=v},1000)};
+  try{navigator.clipboard.writeText(v).then(done,()=>{})}catch(err){}
+});
 $('beat').onclick=()=>copy($('beat'),'v-beat');
 $('half').onclick=()=>copy($('half'),'v-half');
 try{const s=localStorage.getItem('bpmms');if(s)bpmIn.value=s}catch(e){}
