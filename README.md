@@ -9,3 +9,7 @@ kickみたいにそのままdawに置いて使うaudio sampleの方は長さが�
 compressor(+side chain）系やreverbみたいにreleaseのタイミングをmsで設定できるvstを使う時、BPMに合わせて計算しておくと便利
 
 +基本的には、1拍分や半拍分の長さに設定しておくと何となくきれいにできる
+
+
+---
+**移転しました:** https://www.namigroove.com/tools/bpmms/
